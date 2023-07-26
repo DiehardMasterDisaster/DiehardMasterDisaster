@@ -1,0 +1,11 @@
+{
+	"id": "diehardmasterdisaster",
+	"name": "Diehard Master-Disaster",
+	"description": ":3",
+	"features": {
+		"color": "9cf0a4",
+
+		"select_menu_scene": "slugcat_diehardmasterdisaster",
+		"select_menu_scene_ascended": "ghost_diehardmasterdisaster",
+	}
+}

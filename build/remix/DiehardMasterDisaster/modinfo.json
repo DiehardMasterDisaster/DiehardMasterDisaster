@@ -1,0 +1,12 @@
+{
+	"id": "diehard.master.disaster",
+	"name": "Diehard Master-Disaster",
+	"version": "1.0.0",
+	"hide_version": false,
+	"authors": "",
+	"description": "Diehard Master-Disaster",
+	"requirements": ["slime-cubed.slugbase"],
+	"requirements_names": ["SlugBase"],
+	"checksum_override_version": false,
+	"tags": [  ]
+}
