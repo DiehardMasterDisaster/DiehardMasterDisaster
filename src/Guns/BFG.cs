@@ -84,7 +84,7 @@ public class BFG : Gun
         public void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
             sLeaser.sprites = new FSprite[1];
-            sLeaser.sprites[0] = new FSprite("BFGOrb0", true);
+            sLeaser.sprites[0] = new FSprite("DMDBFGOrb0", true);
             sLeaser.sprites[0].scale = 1f;
             //sLeaser.sprites[0].shader = room.game.rainWorld.Shaders["Projection"];
     
