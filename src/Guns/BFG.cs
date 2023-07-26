@@ -84,7 +84,7 @@ public class BFG : Gun
         public void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
             sLeaser.sprites = new FSprite[1];
-            sLeaser.sprites[0] = new FSprite("BFGOrb0", true);
+            sLeaser.sprites[0] = new FSprite("DMDBFGOrb0", true);
             sLeaser.sprites[0].scale = 1f;
             //sLeaser.sprites[0].shader = room.game.rainWorld.Shaders["Projection"];
     
@@ -101,7 +101,7 @@ public class BFG : Gun
     
         public void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
-            sLeaser.sprites[0].SetElementByName("BFGOrb" + (age % 5 == 0 ? 1 : 0));
+            sLeaser.sprites[0].SetElementByName("DMDBFGOrb" + (age % 5 == 0 ? 1 : 0));
             sLeaser.sprites[0].SetPosition(firstChunk.pos - camPos);
     
             if (age % 5 == 0)
