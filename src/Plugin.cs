@@ -56,9 +56,11 @@ public class Plugin : BaseUnityPlugin
             IsInit = true;
 
             Futile.atlasManager.LoadAtlas("atlases/DMDGuns");
+            Futile.atlasManager.LoadAtlas("atlases/DMDSlugcat");
             
             DiehardEnums.Init();
             GunHooks.Apply();
+            PlayerGraphicsHooks.Apply();
             
             Content.Register(
                 new GunFisob(DiehardEnums.AbstractObject.DMDAK47Gun),

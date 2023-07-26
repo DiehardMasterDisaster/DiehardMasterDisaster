@@ -1,5 +1,9 @@
-﻿using DiehardMasterDisaster.Fisobs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
+using MoreSlugcats;
+using Noise;
 using RWCustom;
 using UnityEngine;
 
@@ -48,9 +52,11 @@ public class BFG : Gun
         var orb = (BFGOrb)orbAPO.realizedObject;
 
         //dont let pebbels shoot it !!
-        orb.firstChunk.pos = firstChunk.pos + aimDir * 5;
+        orb.firstChunk.pos = orb.firstChunk.lastPos = firstChunk.pos + aimDir * 5;
+        orb.direction = new Vector2(aimDir.x, 0).normalized;
+        orb.shooter = user;
     }
-    
+
     public class BFGOrb : PhysicalObject, IDrawable
     {
         public BFGOrb(AbstractPhysicalObject abstractPhysicalObject) : base(abstractPhysicalObject)
@@ -62,19 +68,149 @@ public class BFG : Gun
             gravity = 0f;
             bounce = 0f;
             surfaceFriction = 0f;
-            collisionLayer = 0;
+            collisionLayer = 1;
+            CollideWithSlopes = false;
+            CollideWithTerrain = true;
+            CollideWithObjects = true;
             waterFriction = 0f;
             buoyancy = 0f;
         }
-    
-        float age = 1;
-    
+
+        public PhysicalObject shooter;
+        public Vector2 direction;
+        public float speed = 5f;
+
+        private bool detonated;
+        private int age;
+        private int detonationAge = 120;
+        private int finishAge = 300;
+        private float range = 200;
+        private int damageInterval = 20;
+        private float damage = 0.5f;
+
+        private LightningMachine lightning;
+
+        public List<Creature> AffectedCreatures() => room.updateList.Where(x => x is Creature creature && Custom.DistLess(firstChunk.pos, creature.mainBodyChunk.pos, range) && !creature.dead && creature != shooter).Select(x => x as Creature).ToList();
+        
         public override void Update(bool eu)
         {
             age++;
+
+            if (!detonated && room.GetTile(room.GetTilePosition(firstChunk.pos + direction * speed * 5)).Solid)
+            {
+                age = detonationAge;
+                Detonate();
+            }
+            
+            if (!detonated)
+            {
+                firstChunk.pos += direction * speed;
+            }
+
+            if (Random.value < (detonated ? 0.1f : 0.05f))
+            {
+                room.AddObject(new SingularityBomb.SparkFlash(firstChunk.pos, detonated ? 300 : 200f, new Color(0f, 1f, 0f)));
+            }
+
+            if (lightning == null)
+            {
+                lightning = new LightningMachine(firstChunk.pos, new Vector2(firstChunk.pos.x, firstChunk.pos.y), new Vector2(firstChunk.pos.x, firstChunk.pos.y + 10f), 0f, permanent: false, radial: true, 0.3f, 1f, 1f);
+                lightning.volume = 0.8f;
+                lightning.impactType = 3;
+                lightning.lightningType = 0.33f;
+                room.AddObject(lightning);
+            }
+            
+            var dist = Mathf.Clamp(age / 50f, 0.2f, 1f);
+            lightning.pos = firstChunk.pos;
+            lightning.startPoint = new Vector2(Mathf.Lerp(firstChunk.pos.x, detonated ? 400 : 200f, dist * 2f - 2f), firstChunk.pos.y);
+            lightning.endPoint = new Vector2(Mathf.Lerp(firstChunk.pos.x, detonated ? 400 : 200f, dist * 2f - 2f), firstChunk.pos.y + 10f);
+            lightning.chance = Mathf.Lerp(0.2f, 0.8f, dist);
+
+            if (age % damageInterval == 0)
+            {
+                foreach (var creature in AffectedCreatures())
+                {
+                    creature.killTag = (shooter as Creature)?.abstractCreature;
+                    creature.Violence(firstChunk, default, creature.mainBodyChunk, null, Creature.DamageType.Electric, damage, 20);
+                }
+            }
+            
+            if (age > detonationAge)
+            {
+                Detonate();
+            }
+
+            if (age > finishAge)
+            {
+                Finish();
+            }
+
             base.Update(eu);
         }
-    
+
+        public override void Collide(PhysicalObject otherObject, int myChunk, int otherChunk)
+        {
+            if (otherObject != shooter)
+            {
+                Detonate();
+            }
+        }
+
+        private void Detonate()
+        {
+            if (detonated) return;
+
+            room.AddObject(new SingularityBomb.SparkFlash(firstChunk.pos, 300f, new Color(0f, 1f, 0f)));
+            room.AddObject(new Explosion(room, this, firstChunk.pos, 7, 450f, 6.2f, 10f, 280f, 0.25f, shooter as Creature, 0.3f, 160f, 1f));
+            room.AddObject(new Explosion(room, this, firstChunk.pos, 7, 2000f, 4f, 0f, 400f, 0.25f, shooter as Creature, 0.3f, 200f, 1f));
+            room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 280f, 1f, 7, new Color(0, 1, 0)));
+            room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 230f, 1f, 3, new Color(1f, 1f, 1f)));
+            room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 2000f, 2f, 60, new Color(0, 1, 0)));
+            room.AddObject(new ShockWave(firstChunk.pos, 350f, 0.485f, 300, highLayer: true));
+            room.AddObject(new ShockWave(firstChunk.pos, 2000f, 0.185f, 180));
+
+            for (var i = 0; i < 25; i++)
+            {
+                var rnv = Custom.RNV();
+                if (room.GetTile(firstChunk.pos + rnv * 20f).Solid)
+                {
+                    if (!room.GetTile(firstChunk.pos - rnv * 20f).Solid)
+                    {
+                        rnv *= -1f;
+                    }
+                    else
+                    {
+                        rnv = Custom.RNV();
+                    }
+                }
+                for (var j = 0; j < 3; j++)
+                {
+                    room.AddObject(new Spark(firstChunk.pos + rnv * Mathf.Lerp(30f, 60f, Random.value), rnv * Mathf.Lerp(7f, 38f, Random.value) + Custom.RNV() * 20f * Random.value, Color.Lerp(new Color(0, 1, 0), new Color(1f, 1f, 1f), Random.value), null, 11, 28));
+                }
+                room.AddObject(new Explosion.FlashingSmoke(firstChunk.pos + rnv * 40f * Random.value, rnv * Mathf.Lerp(4f, 20f, Mathf.Pow(Random.value, 2f)), 1f + 0.05f * Random.value, new Color(1f, 1f, 1f), new Color(0, 1, 0), Random.Range(3, 11)));
+            }
+            
+            room.ScreenMovement(firstChunk.pos, default(Vector2), 0.9f);
+            room.PlaySound(SoundID.Bomb_Explode, firstChunk.pos);
+            room.InGameNoise(new InGameNoise(firstChunk.pos, 9000f, this, 1f));
+            
+            foreach (var creature in AffectedCreatures())
+            {
+                creature.killTag = (shooter as Creature)?.abstractCreature;
+                creature.Die();
+            }
+
+            detonated = true;
+        }
+
+        private void Finish()
+        {
+            lightning?.Destroy();
+            lightning = null;
+            Destroy();
+        }
+
         public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
         {
             rCam.ReturnFContainer("HUD").AddChild(sLeaser.sprites[0]);
@@ -102,12 +238,15 @@ public class BFG : Gun
         public void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
             sLeaser.sprites[0].SetElementByName("DMDBFGOrb" + (age % 5 == 0 ? 1 : 0));
-            sLeaser.sprites[0].SetPosition(firstChunk.pos - camPos);
+            sLeaser.sprites[0].SetPosition(Vector2.Lerp(firstChunk.lastPos, firstChunk.pos, timeStacker) - camPos);
     
             if (age % 5 == 0)
                 sLeaser.sprites[0].rotation = Random.value * 360f;
     
-            //sLeaser.sprites[1].SetPosition(firstChunk.pos - camPos);
+            if (detonated || slatedForDeletetion || room != rCam.room)
+            {
+                sLeaser.CleanSpritesAndRemove();
+            }
         }
     }
 }
