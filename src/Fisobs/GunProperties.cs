@@ -26,6 +26,6 @@ public class GunProperties : ItemProperties
 
     public override void Grabability(Player player, ref Player.ObjectGrabability grabability)
     {
-        grabability = Player.ObjectGrabability.TwoHands;
+        grabability = Player.ObjectGrabability.OneHand;
     }
 }

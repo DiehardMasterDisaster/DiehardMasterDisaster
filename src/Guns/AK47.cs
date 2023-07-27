@@ -17,7 +17,6 @@ public class AK47 : Gun
         gunLength = 60;
         randomSpreadStat = 1.4f;
         angleDiff = 19;
-        ammoCost = 1;
         ammoType = DiehardEnums.AmmoType.Large;
         CheckIfArena(world);
     }

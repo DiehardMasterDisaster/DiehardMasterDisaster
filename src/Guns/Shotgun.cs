@@ -16,7 +16,6 @@ public class Shotgun : Gun
         gunLength = 47;
         randomSpreadStat = 5f;
         angleDiff = 30;
-        ammoCost = 2;
         ammoType = DiehardEnums.AmmoType.Shells;
         CheckIfArena(world);
     }

@@ -20,7 +20,6 @@ public class BFG : Gun
         GunSpriteName = "DMDBFG9000";
         gunLength = 87;
         randomSpreadStat = 0.2f;
-        ammoCost = 4;
         ammoType = DiehardEnums.AmmoType.Special;
         CheckIfArena(world);
     }
@@ -84,7 +83,7 @@ public class BFG : Gun
         private int age;
         private int detonationAge = 120;
         private int finishAge = 300;
-        private float range = 200;
+        private float range = 250;
         private int damageInterval = 20;
         private float damage = 0.5f;
 
@@ -132,10 +131,10 @@ public class BFG : Gun
                 foreach (var creature in AffectedCreatures())
                 {
                     creature.killTag = (shooter as Creature)?.abstractCreature;
-                    creature.Violence(firstChunk, default, creature.mainBodyChunk, null, Creature.DamageType.Electric, damage, 20);
+                    creature.Violence(firstChunk, default, creature.bodyChunks[Random.Range(0, creature.bodyChunks.Length)], null, Creature.DamageType.Electric, damage, 20);
                 }
             }
-            
+
             if (age > detonationAge)
             {
                 Detonate();
@@ -162,12 +161,12 @@ public class BFG : Gun
             if (detonated) return;
 
             room.AddObject(new SingularityBomb.SparkFlash(firstChunk.pos, 300f, new Color(0f, 1f, 0f)));
-            room.AddObject(new Explosion(room, this, firstChunk.pos, 7, 450f, 6.2f, 10f, 280f, 0.25f, shooter as Creature, 0.3f, 160f, 1f));
+            room.AddObject(new Explosion(room, this, firstChunk.pos, 7, 450f, 6.2f, 0.5f, 280f, 0.25f, shooter as Creature, 0.3f, 160f, 1f));
             room.AddObject(new Explosion(room, this, firstChunk.pos, 7, 2000f, 4f, 0f, 400f, 0.25f, shooter as Creature, 0.3f, 200f, 1f));
             room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 280f, 1f, 7, new Color(0, 1, 0)));
             room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 230f, 1f, 3, new Color(1f, 1f, 1f)));
             room.AddObject(new Explosion.ExplosionLight(firstChunk.pos, 2000f, 2f, 60, new Color(0, 1, 0)));
-            room.AddObject(new ShockWave(firstChunk.pos, 350f, 0.485f, 300, highLayer: true));
+            //room.AddObject(new ShockWave(firstChunk.pos, 350f, 0.485f, 300, highLayer: true));
             room.AddObject(new ShockWave(firstChunk.pos, 2000f, 0.185f, 180));
 
             for (var i = 0; i < 25; i++)

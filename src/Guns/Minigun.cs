@@ -17,7 +17,7 @@ public class Minigun : Gun
         gunLength = 70;
         randomSpreadStat = 1.4f;
         angleDiff = 3;
-        ammoCost = 1;
+        ammoType = DiehardEnums.AmmoType.Large;
         CheckIfArena(world);
     }
 

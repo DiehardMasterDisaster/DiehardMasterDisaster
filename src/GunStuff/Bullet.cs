@@ -112,16 +112,19 @@ public class Bullet : UpdatableAndDeletable, IDrawable
             {
                 critter.SetKillTag((parent as Creature).abstractCreature);
             }
+
             if (loud)
+            {
                 room.PlaySound(SoundID.Spear_Stick_In_Creature, hitPos, 0.75f + 0.5f * damage, 1.5f - damage);
+            }
+
+            if (critter is Player)
+            {
+                critter.Violence(sourceChunk, appliedForce, collision.chunk, collision.onAppendagePos, Creature.DamageType.Stab, damage * 0.3f, stun * 1.2f);
+            }
             else
             {
-                if (critter is Player)
-                {
-                    critter.Violence(sourceChunk, appliedForce, collision.chunk, collision.onAppendagePos, Creature.DamageType.Stab, damage * 0.3f, stun * 1.2f);
-                }
-                else
-                    critter.Violence(sourceChunk, appliedForce, collision.chunk, collision.onAppendagePos, Creature.DamageType.Stab, damage, stun);
+                critter.Violence(sourceChunk, appliedForce, collision.chunk, collision.onAppendagePos, Creature.DamageType.Stab, damage, stun);
             }
 
 

@@ -27,7 +27,6 @@ abstract public class Gun : Weapon, IDrawable
     public bool flipGun;
     public bool autoFlip;
     public GunSmolder smolder;
-    public int ammoCost = 0;
     protected int ownerAge;
     public DiehardEnums.AmmoType ammoType = DiehardEnums.AmmoType.Small;
 

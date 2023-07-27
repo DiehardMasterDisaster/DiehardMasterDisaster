@@ -20,7 +20,6 @@ public class GrenadeLauncher : Gun
         GunSpriteName = "DMDRocketLauncher";
         gunLength = 87;
         randomSpreadStat = 0.2f;
-        ammoCost = 4;
         ammoType = DiehardEnums.AmmoType.Special;
         CheckIfArena(world);
     }
