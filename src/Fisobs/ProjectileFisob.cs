@@ -1,5 +1,4 @@
-﻿using DiehardMasterDisaster.Guns;
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using Fisobs.Items;
 using Fisobs.Properties;
 using Fisobs.Sandbox;

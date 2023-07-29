@@ -11,16 +11,14 @@ namespace DiehardMasterDisaster.Guns;
 
 public class BFG : Gun
 {
-    public BFG(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public BFG(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 20;
         reloadSpeed = 120;
-        clipSize = 1;
         damageStat = 3f;
         GunSpriteName = "DMDBFG9000";
         gunLength = 87;
         randomSpreadStat = 0.2f;
-        ammoType = DiehardEnums.AmmoType.Special;
         CheckIfArena(world);
     }
 

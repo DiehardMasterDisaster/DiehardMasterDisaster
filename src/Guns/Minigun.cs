@@ -1,4 +1,5 @@
-﻿using DiehardMasterDisaster.GunStuff;
+﻿using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.GunStuff;
 using RWCustom;
 using UnityEngine;
 
@@ -6,18 +7,16 @@ namespace DiehardMasterDisaster.Guns;
 
 public class Minigun : Gun
 {
-    public Minigun(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public Minigun(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 3;
         reloadSpeed = 110;
-        clipSize = 50;
         damageStat = 0.2f;
         automatic = true;
         GunSpriteName = "DMDMinigun";
         gunLength = 70;
         randomSpreadStat = 1.4f;
         angleDiff = 3;
-        ammoType = DiehardEnums.AmmoType.Large;
         CheckIfArena(world);
     }
 
@@ -55,20 +54,9 @@ public class Minigun : Gun
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
-        sLeaser.sprites = new FSprite[1 + clipSize];
+        sLeaser.sprites = new FSprite[1];
         sLeaser.sprites[0] = new FSprite(GunSpriteName + "1", true);
         sLeaser.sprites[0].anchorY = 0.5f;
-
-        for (var i = 1; i <= clipSize; i++)
-        {
-            sLeaser.sprites[i] = new FSprite("pixel")
-            {
-                scale = 4,
-                isVisible = false
-            };
-        }
-
-        firstPipAngle = 0 + (angleDiff / 2 * (clipSize - 1));
 
         AddToContainer(sLeaser, rCam, null);
     }
@@ -88,27 +76,6 @@ public class Minigun : Gun
         }
         else
             sLeaser.sprites[0].scaleY = (flipGun ? 1f : -1f);
-
-
-        if (owner is Player p && mode == Mode.Carried)
-            for (var i = 1; i <= clipSize; i++)
-            {
-                sLeaser.sprites[i].isVisible = i <= Clip && p.GetDMD().EquippedGun == this;
-                sLeaser.sprites[i].SetPosition(Custom.DegToVec((firstPipAngle - (angleDiff * (i - 1)))) * 30 + owner.firstChunk.pos + new Vector2(0, 20) - camPos);
-            }
-        else
-        {
-            for (var i = 1; i <= clipSize; i++)
-            {
-                sLeaser.sprites[i].isVisible = false;
-            }
-        }
-
-        for (var i = 1; i <= clipSize; i++)
-        {
-            sLeaser.sprites[i].alpha = ownerAge / 20f;
-        }
-
 
         if (slatedForDeletetion || room != rCam.room)
         {

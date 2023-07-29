@@ -36,6 +36,15 @@ public static class DiehardEnums
         public static readonly AmmoType Large = new(nameof(Large), true);
         public static readonly AmmoType Shells = new(nameof(Shells), true);
         public static readonly AmmoType Special = new(nameof(Special), true);
+        
+        public int AmmoStorage => value switch
+        {
+            nameof(Small) => DiehardOptions.MaxAmmoSmall.Value,
+            nameof(Large) => DiehardOptions.MaxAmmoLarge.Value,
+            nameof(Shells) => DiehardOptions.MaxAmmoShells.Value,
+            nameof(Special) => DiehardOptions.MaxAmmoSpecial.Value,
+            _ => 100
+        };
 
         public AmmoType(string value, bool register = false) : base(value, register)
         {

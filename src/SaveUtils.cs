@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.GunStuff;
 
 namespace DiehardMasterDisaster;
 
@@ -58,15 +59,20 @@ public static class SaveUtils
             };
 
             gun.ID.number = ammo;
-            dPlayer.AvailableGuns.Add(gun);
+            dPlayer.StoredGuns.Add(gun);
         }
     }
 
     public static void SaveGuns(PlayerExtension.DiehardPlayer player)
     {
         var gunData = new List<string>();
-        foreach (var gun in player.AvailableGuns)
+        foreach (var gun in player.StoredGuns)
         {
+            //-- Realized saved guns have to be removed from the world or they'll be duplicated on load
+            if (gun.realizedObject is Gun realizedGun)
+            {
+                 player.StoreGun(realizedGun);
+            }
             gunData.Add($"{gun.type.value}|{gun.ID.number}");
         }
         player.SaveData.Set(SavedGunsKey, gunData);

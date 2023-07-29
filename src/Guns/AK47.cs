@@ -1,4 +1,5 @@
-﻿using DiehardMasterDisaster.GunStuff;
+﻿using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.GunStuff;
 using RWCustom;
 using UnityEngine;
 
@@ -6,18 +7,16 @@ namespace DiehardMasterDisaster.Guns;
 
 public class AK47 : Gun
 {
-    public AK47(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public AK47(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 6;
         reloadSpeed = 35;
-        clipSize = 15;
         damageStat = 0.3f;
         automatic = true;
         GunSpriteName = "DMDAK-47";
         gunLength = 60;
         randomSpreadStat = 1.4f;
         angleDiff = 19;
-        ammoType = DiehardEnums.AmmoType.Large;
         CheckIfArena(world);
     }
 

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.HUD;
 using RWCustom;
 using UnityEngine;
 
@@ -15,7 +17,7 @@ abstract public class Gun : Weapon, IDrawable
     public float damageStat;
     public int fireSpeed;
     public int reloadSpeed;
-    public int clipSize;
+    public int clipSize => abstractGun.ClipSize;
     public Vector2 aimDir;
     public Vector2 lastAimDir;
     public int fireDelay;
@@ -28,17 +30,18 @@ abstract public class Gun : Weapon, IDrawable
     public bool autoFlip;
     public GunSmolder smolder;
     protected int ownerAge;
-    public DiehardEnums.AmmoType ammoType = DiehardEnums.AmmoType.Small;
+    public DiehardEnums.AmmoType ammoType => abstractGun.AmmoType;
+    public AbstractGun abstractGun;
 
     public int Clip
     {
-        get => abstractPhysicalObject.ID.number;
-        set => abstractPhysicalObject.ID.number = value;
+        get => abstractGun.ID.number;
+        set => abstractGun.ID.number = value;
     }
 
     public List<PhysicalObject> relatedObjects = new List<PhysicalObject>();
 
-    public Gun(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public Gun(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         bodyChunks = new BodyChunk[1];
         bodyChunks[0] = new BodyChunk(this, 0, new Vector2(0f, 0f), 5f, 0.07f);
@@ -55,6 +58,7 @@ abstract public class Gun : Weapon, IDrawable
         aimDir.y = (UnityEngine.Random.value * 2f - 1f) * .2f;
         lastAimDir = aimDir;
         autoFlip = true;
+        abstractGun = abstractPhysicalObject;
     }
 
     public void CheckIfArena(World world)
@@ -70,7 +74,6 @@ abstract public class Gun : Weapon, IDrawable
     public override void PlaceInRoom(Room placeRoom)
     {
         base.PlaceInRoom(placeRoom);
-        abstractPhysicalObject.ID.number = clipSize;
         firstChunk.pos = placeRoom.MiddleOfTile(abstractPhysicalObject.pos);
         firstChunk.lastPos = firstChunk.pos;
     }
@@ -97,7 +100,7 @@ abstract public class Gun : Weapon, IDrawable
 
         if (firstupdate && owner is Player p)
         {
-            Clip = p.GetDMD().TrySubtractAmmo(ammoType, clipSize);
+            //Clip = p.GetDMD().TrySubtractAmmo(ammoType, clipSize);
         }
 
         justShot = false;
@@ -236,9 +239,17 @@ abstract public class Gun : Weapon, IDrawable
         if (canReload || owner is Scavenger || owner == null)
         {
             reloadTime = reloadSpeed;
+            if (owner is Player player && player.GetDMD().IsDMD)
+            {
+                player.GetDMD().HUD.Show(reloadSpeed + WeaponsHUD.DefaultHudDisplayTime);
+            }
         }
         else if (triggerIsReleased)
         {
+            if (owner is Player player && player.GetDMD().IsDMD)
+            {
+                player.GetDMD().HUD.Show();
+            }
             room.PlaySound(SoundID.Rock_Hit_Wall, firstChunk.pos, .9f, 1.35f);
             firstChunk.pos -= aimDir * 5f;
             firstChunk.lastPos = firstChunk.pos;
@@ -298,26 +309,14 @@ abstract public class Gun : Weapon, IDrawable
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
-        sLeaser.sprites = new FSprite[1 + clipSize];
+        sLeaser.sprites = new FSprite[1];
         sLeaser.sprites[0] = new FSprite(GunSpriteName, true);
         sLeaser.sprites[0].anchorY = 0.5f; //.8
-
-        for (var i = 1; i <= clipSize; i++)
-        {
-            sLeaser.sprites[i] = new FSprite("pixel")
-            {
-                scale = 4,
-                isVisible = false
-            };
-        }
-
-        firstPipAngle = 0 + (angleDiff / 2 * (clipSize - 1));
 
         AddToContainer(sLeaser, rCam, null);
     }
 
     public int angleDiff = 24;
-    protected int firstPipAngle;
 
     public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
@@ -334,27 +333,6 @@ abstract public class Gun : Weapon, IDrawable
         }
         else
             sLeaser.sprites[0].scaleY = (flipGun ? 1f : -1f);
-
-
-        if (owner != null && owner is Player p && mode == Mode.Carried)
-            for (var i = 1; i <= clipSize; i++)
-            {
-                sLeaser.sprites[i].isVisible = i <= Clip && p.GetDMD().EquippedGun == this;
-                sLeaser.sprites[i].SetPosition(Custom.DegToVec((firstPipAngle - (angleDiff * (i - 1)))) * 30 + owner.firstChunk.pos + new Vector2(0, 20) - camPos);
-            }
-        else
-        {
-            for (var i = 1; i <= clipSize; i++)
-            {
-                sLeaser.sprites[i].isVisible = false;
-            }
-        }
-
-        for (var i = 1; i <= clipSize; i++)
-        {
-            sLeaser.sprites[i].alpha = ownerAge / 20f;
-        }
-
 
         if (slatedForDeletetion || room != rCam.room)
         {
@@ -377,11 +355,6 @@ abstract public class Gun : Weapon, IDrawable
 
         sLeaser.sprites[0].RemoveFromContainer();
         newContatiner.AddChild(sLeaser.sprites[0]);
-        for (var i = 1; i < sLeaser.sprites.Length; i++)
-        {
-            sLeaser.sprites[i].RemoveFromContainer();
-            HUDcont.AddChild(sLeaser.sprites[i]);
-        }
     }
 
     public virtual void ShootSound()

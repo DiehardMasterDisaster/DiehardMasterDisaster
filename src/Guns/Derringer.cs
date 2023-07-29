@@ -1,4 +1,5 @@
-﻿using DiehardMasterDisaster.GunStuff;
+﻿using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.GunStuff;
 using RWCustom;
 using UnityEngine;
 
@@ -6,17 +7,15 @@ namespace DiehardMasterDisaster.Guns;
 
 public class Derringer : Gun
 {
-    public Derringer(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public Derringer(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 1;
         reloadSpeed = 50;
-        clipSize = 2;
         damageStat = 0.35f;
         GunSpriteName = "DMDDerringer"; //does more damage to players
         gunLength = 20;
         randomSpreadStat = 0.8f;
         angleDiff = 40;
-        ammoType = DiehardEnums.AmmoType.Small;
         CheckIfArena(world);
     }
 

@@ -3,7 +3,6 @@ using System.Security;
 using System.Security.Permissions;
 using BepInEx;
 using DiehardMasterDisaster.Fisobs;
-using DiehardMasterDisaster.Guns;
 using DiehardMasterDisaster.Hooks;
 using Fisobs.Core;
 using UnityEngine;
@@ -23,6 +22,8 @@ public class Plugin : BaseUnityPlugin
     public bool IsInit;
     public bool IsPreInit;
     public bool IsPostInit;
+
+    public static DiehardOptions Options;
 
     private void OnEnable()
     {
@@ -52,15 +53,36 @@ public class Plugin : BaseUnityPlugin
 
         try
         {
+            MachineConnector.SetRegisteredOI(MOD_ID, Options = new DiehardOptions());
+            
             if (IsInit) return;
             IsInit = true;
+
+            DiehardEnums.Init();
 
             Futile.atlasManager.LoadAtlas("atlases/DMDGuns");
             Futile.atlasManager.LoadAtlas("atlases/DMDSlugcat");
             
-            DiehardEnums.Init();
+            //-- TODO: Put all this crap in an atlas
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDCategoryBackground");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDWeaponBackground");
+
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDMinigun");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDGrenadeLauncherGun");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDShotgun");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDBFGGun");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDDerringerGun");
+            Futile.atlasManager.LoadImage("sprites/WeaponsHUDIconDMDAK47Gun");
+
+            foreach (var ammoType in ExtEnumBase.GetNames(typeof(DiehardEnums.AmmoType)))
+            {
+                Futile.atlasManager.LoadImage($"sprites/WeaponsHUDCategoryIcon{ammoType}");
+            }
+
             GunHooks.Apply();
             PlayerGraphicsHooks.Apply();
+            HUDHooks.Apply();
+            SaveDataHooks.Apply();
             
             Content.Register(
                 new GunFisob(DiehardEnums.AbstractObject.DMDAK47Gun),

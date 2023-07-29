@@ -1,6 +1,4 @@
-﻿using DiehardMasterDisaster.Fisobs;
-using DiehardMasterDisaster.GunStuff;
-using RWCustom;
+﻿using DiehardMasterDisaster.GunStuff;
 using UnityEngine;
 
 namespace DiehardMasterDisaster.Hooks;

@@ -1,5 +1,7 @@
-﻿using DiehardMasterDisaster.Fisobs;
+﻿using System.Linq;
+using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
+using DiehardMasterDisaster.HUD;
 using RWCustom;
 using UnityEngine;
 
@@ -7,20 +9,149 @@ namespace DiehardMasterDisaster.Hooks;
 
 public static class GunHooks
 {
+    static bool wasPressed;
+
     public static void Apply()
     {
         On.Player.Update += Player_Update;
         On.Player.ThrowObject += Player_ThrowObject;
-        
-        On.Player.Jump += (orig, self) =>
-        {
-            orig(self);
-            var gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDAK47Gun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
-            gun.RealizeInRoom();
-            gun.realizedObject.bodyChunks[0].HardSetPosition(self.mainBodyChunk.pos);
+        On.Player.ReleaseGrasp += Player_ReleaseGrasp;
+        On.Player.SlugcatGrab += Player_SlugcatGrab;
+        On.Player.Update += OnPlayer_Update;
+    }
 
-            self.GetDMD().AddAmmo(DiehardEnums.AmmoType.Large, 20);
-        };
+    private static void Player_ReleaseGrasp(On.Player.orig_ReleaseGrasp orig, Player self, int grasp)
+    {
+        var gun = self.grasps[grasp]?.grabbed as Gun;
+
+        orig(self, grasp);
+        
+        if (gun != null && self.GetDMD().IsDMD)
+        {
+            self.GetDMD().StoreGun(gun);
+        }
+    }
+
+    private static void Player_SlugcatGrab(On.Player.orig_SlugcatGrab orig, Player self, PhysicalObject obj, int graspUsed)
+    {
+        orig(self, obj, graspUsed);
+
+        if (self.grasps[graspUsed]?.grabbed is Gun gun && self.GetDMD().IsDMD && !self.GetDMD().ActuallyEquipGun)
+        {
+            self.GetDMD().StoreGun(gun);
+            if (self.grasps[graspUsed == 0 ? 1 : 0]?.grabbed is not Gun)
+            {
+                self.GetDMD().EquipGun(gun.abstractGun.type);
+            }
+        }
+    }
+
+    private static void OnPlayer_Update(On.Player.orig_Update orig, Player self, bool eu)
+    {
+        orig(self, eu);
+
+        var dmd = self.GetDMD();
+        if (!dmd.IsDMD) return;
+        
+        //-- TODO: Proper keybinds
+        var prevPressed = Input.GetKey(KeyCode.KeypadDivide);
+        var nextPressed = Input.GetKey(KeyCode.KeypadMultiply);
+        if ((prevPressed && !dmd.SwapWeaponPrevKey) || nextPressed && !dmd.SwapWeaponNextKey)
+        {
+            var grasp = -1;
+            Gun currentWeapon = null;
+            for (var i = 0; i < self.grasps.Length; i++)
+            {
+                if (self.grasps[i]?.grabbed is Gun graspedGun)
+                {
+                    currentWeapon = graspedGun;
+                    break;
+                }
+            }
+
+            var nextWeapon = dmd.HUD.GetRelativeWeapon(currentWeapon?.abstractGun, prevPressed ? -1 : 1);
+            if (nextWeapon != null)
+            {
+                if (currentWeapon != null)
+                {
+                    dmd.StoreGun(currentWeapon);
+                } 
+                dmd.EquipGun(nextWeapon.type);
+            }
+
+            if (prevPressed)
+            {
+                dmd.SwapWeaponPrevKey = true;
+            }
+
+            if (nextPressed)
+            {
+                dmd.SwapWeaponNextKey = true;
+            }
+        }
+        else
+        {
+            if (!prevPressed)
+            {
+                dmd.SwapWeaponPrevKey = false;
+            }
+
+            if (!nextPressed)
+            {
+                dmd.SwapWeaponNextKey = false;
+            }
+        }
+
+        //-- TODO: Should be removed when releasing or only enabled if a file is present or something
+        TestStuff(self);
+    }
+
+    private static void TestStuff(Player self)
+    {
+        if (Input.GetKey(KeyCode.KeypadMinus))
+        {
+            AbstractGun gun = null;
+            if (Input.GetKey(KeyCode.Keypad7) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDMinigun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (Input.GetKey(KeyCode.Keypad8) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDBFGGun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (Input.GetKey(KeyCode.Keypad9) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDDerringerGun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (Input.GetKey(KeyCode.Keypad4) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDShotgun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (Input.GetKey(KeyCode.Keypad5) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDGrenadeLauncherGun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (Input.GetKey(KeyCode.Keypad6) && !wasPressed)
+            {
+                gun = new AbstractGun(self.room.world, DiehardEnums.AbstractObject.DMDAK47Gun, new WorldCoordinate(self.room.abstractRoom.index, 0, 0, -1), self.room.game.GetNewID());
+            }
+            else if (!(Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.Keypad9) || Input.GetKey(KeyCode.Keypad4) || Input.GetKey(KeyCode.Keypad5) || Input.GetKey(KeyCode.Keypad6)))
+            {
+                wasPressed = false;
+            }
+
+            if (gun != null)
+            {
+                wasPressed = true;
+
+                gun.CurrentAmmo = gun.ClipSize;
+                gun.RealizeInRoom();
+                gun.realizedObject.bodyChunks[0].HardSetPosition(self.mainBodyChunk.pos);
+
+                self.GetDMD().AddAmmo(gun.AmmoType, Mathf.CeilToInt(gun.AmmoType.AmmoStorage / 5f));
+                ((WeaponsHUD)self.room.game.cameras.FirstOrDefault().hud.parts.FirstOrDefault(x => x is WeaponsHUD)).Show();
+            }
+        }
     }
 
     private static void Player_ThrowObject(On.Player.orig_ThrowObject orig, Player self, int grasp, bool eu)

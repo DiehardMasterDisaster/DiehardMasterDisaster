@@ -1,11 +1,19 @@
 {
-	"id": "diehardmasterdisaster",
-	"name": "Diehard Master-Disaster",
-	"description": ":3",
-	"features": {
-		"color": "FFFFFF",
-
-		"select_menu_scene": "slugcat_diehardmasterdisaster",
-		"select_menu_scene_ascended": "ghost_diehardmasterdisaster",
-	}
+  "id": "diehardmasterdisaster",
+  "name": "Diehard Master-Disaster",
+  "description": ":3",
+  "features": {
+    "custom_colors": [
+      {
+        "name": "Body",
+        "story": "FFFFFF"
+      },
+      {
+        "name": "Eyes",
+        "story": "FFFFFF"
+      }
+    ],
+    "select_menu_scene": "slugcat_diehardmasterdisaster",
+    "select_menu_scene_ascended": "ghost_diehardmasterdisaster"
+  }
 }

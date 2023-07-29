@@ -1,4 +1,5 @@
-﻿using DiehardMasterDisaster.GunStuff;
+﻿using DiehardMasterDisaster.Fisobs;
+using DiehardMasterDisaster.GunStuff;
 using RWCustom;
 using UnityEngine;
 
@@ -6,17 +7,15 @@ namespace DiehardMasterDisaster.Guns;
 
 public class Shotgun : Gun
 {
-    public Shotgun(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public Shotgun(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 30;
         reloadSpeed = 64;
-        clipSize = 3;
         damageStat = 1.8f;
         GunSpriteName = "DMDShotty";
         gunLength = 47;
         randomSpreadStat = 5f;
         angleDiff = 30;
-        ammoType = DiehardEnums.AmmoType.Shells;
         CheckIfArena(world);
     }
 

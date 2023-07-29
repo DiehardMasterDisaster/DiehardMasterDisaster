@@ -11,16 +11,14 @@ namespace DiehardMasterDisaster.Guns;
 
 public class GrenadeLauncher : Gun
 {
-    public GrenadeLauncher(AbstractPhysicalObject abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
+    public GrenadeLauncher(AbstractGun abstractPhysicalObject, World world) : base(abstractPhysicalObject, world)
     {
         fireSpeed = 20;
         reloadSpeed = 120;
-        clipSize = 4;
         damageStat = 3f;
         GunSpriteName = "DMDRocketLauncher";
         gunLength = 87;
         randomSpreadStat = 0.2f;
-        ammoType = DiehardEnums.AmmoType.Special;
         CheckIfArena(world);
     }
 
