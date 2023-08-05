@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using DiehardMasterDisaster.HUD;
-using HUD;
 
 namespace DiehardMasterDisaster.Hooks;
 
@@ -18,11 +17,11 @@ public static class HUDHooks
         if (self.isNPC || !dmd.IsDMD || dmd.HUD != null) return;
         
         //-- TODO: Splitscreen support
-        var hud = self.abstractCreature.world?.game?.cameras?.FirstOrDefault()?.hud;
+        var hud = self.abstractCreature.world.game.cameras.FirstOrDefault()?.hud;
         if (hud != null)
         {
             var dmdHUD = new WeaponsHUD(hud, self);
-            self.abstractCreature.world.game.cameras[0].hud.AddPart(dmd.HUD = dmdHUD);
+            hud.AddPart(dmd.HUD = dmdHUD);
         }
     }
 }

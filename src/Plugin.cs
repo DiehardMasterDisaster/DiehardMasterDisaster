@@ -83,6 +83,7 @@ public class Plugin : BaseUnityPlugin
             PlayerGraphicsHooks.Apply();
             HUDHooks.Apply();
             SaveDataHooks.Apply();
+            CoolnessHooks.Apply();
             
             Content.Register(
                 new GunFisob(DiehardEnums.AbstractObject.DMDAK47Gun),

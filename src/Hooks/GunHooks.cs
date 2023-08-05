@@ -58,11 +58,10 @@ public static class GunHooks
         var nextPressed = Input.GetKey(KeyCode.KeypadMultiply);
         if ((prevPressed && !dmd.SwapWeaponPrevKey) || nextPressed && !dmd.SwapWeaponNextKey)
         {
-            var grasp = -1;
             Gun currentWeapon = null;
-            for (var i = 0; i < self.grasps.Length; i++)
+            foreach (var grasp in self.grasps)
             {
-                if (self.grasps[i]?.grabbed is Gun graspedGun)
+                if (grasp?.grabbed is Gun graspedGun)
                 {
                     currentWeapon = graspedGun;
                     break;

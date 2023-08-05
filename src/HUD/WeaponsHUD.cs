@@ -4,7 +4,6 @@ using System.Linq;
 using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
 using HUD;
-using On.RWCustom;
 using UnityEngine;
 
 namespace DiehardMasterDisaster.HUD;
@@ -35,7 +34,7 @@ public class WeaponsHUD : HudPart
     private static readonly Color BarBackgroundColor = Color.red;
     private static readonly Color BarForegroundColor = Color.green;
     
-    
+    //-- TODO: also, should change it so it reduces the container size if it goes past the top of the screen in order to accomodate many HUDs
     private readonly FContainer container = new();
 
     private Vector2 pos;
@@ -45,6 +44,7 @@ public class WeaponsHUD : HudPart
     private int show;
 
     //-- TODO: 4 is a hardcoded amount of categories, could change this to be dynamic
+    //-- TODO: should be changed to only consider DMD players before the current one so it doesn't offset when not needed
     private int YOffset => Owner.playerState.playerNumber * (int)CategoryHeight * 4;
 
     public WeaponsHUD(global::HUD.HUD hud, Player owner) : base(hud)
@@ -145,7 +145,7 @@ public class WeaponsHUD : HudPart
         private readonly FSprite TypeSprite;
         private readonly FSprite AmmoMeterBackground;
         private readonly FSprite AmmoMeterBar;
-        public List<WeaponDisplay> WeaponDisplays = new();
+        public readonly List<WeaponDisplay> WeaponDisplays = new();
         
         private readonly WeaponsHUD owner;
         private readonly int index;
@@ -161,7 +161,6 @@ public class WeaponsHUD : HudPart
             this.owner = owner;
             this.index = index;
 
-            //-- TODO: Colors are drawn on the sprites themselves, should probably change them to white and color via code, mainly for multiplayer, could keep the half life colors for single player
             BackgroundSprite = new FSprite("sprites/WeaponsHUDCategoryBackground")
             {
                 anchorX = 0,
@@ -280,7 +279,6 @@ public class WeaponsHUD : HudPart
             Index = index;
             Weapon = weapon;
 
-            //-- TODO: Colors are drawn on the sprites themselves, should probably change them to white and color via code, mainly for multiplayer, could keep the half life colors for single player
             BackgroundSprite = new FSprite("sprites/WeaponsHUDWeaponBackground")
             {
                 anchorX = 0,
