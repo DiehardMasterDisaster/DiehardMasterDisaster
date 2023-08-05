@@ -1,6 +1,6 @@
 ﻿using DiehardMasterDisaster.CoolnessSystem;
 
-namespace DiehardMasterDisaster.Hooks;
+namespace DiehardMasterDisaster.HUD;
 
 public static class CoolnessHooks
 {

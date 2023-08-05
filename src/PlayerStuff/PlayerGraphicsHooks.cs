@@ -1,7 +1,7 @@
 ﻿using DiehardMasterDisaster.GunStuff;
 using UnityEngine;
 
-namespace DiehardMasterDisaster.Hooks;
+namespace DiehardMasterDisaster.PlayerStuff;
 
 public static class PlayerGraphicsHooks
 {

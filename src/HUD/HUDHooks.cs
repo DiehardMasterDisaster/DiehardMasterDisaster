@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using DiehardMasterDisaster.HUD;
 
-namespace DiehardMasterDisaster.Hooks;
+namespace DiehardMasterDisaster.HUD;
 
 public static class HUDHooks
 {

@@ -3,7 +3,10 @@ using System.Security;
 using System.Security.Permissions;
 using BepInEx;
 using DiehardMasterDisaster.Fisobs;
-using DiehardMasterDisaster.Hooks;
+using DiehardMasterDisaster.GunStuff;
+using DiehardMasterDisaster.HUD;
+using DiehardMasterDisaster.PlayerStuff;
+using DiehardMasterDisaster.SaveData;
 using Fisobs.Core;
 using UnityEngine;
 

@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using DiehardMasterDisaster.Fisobs;
-using DiehardMasterDisaster.GunStuff;
 using DiehardMasterDisaster.HUD;
 using RWCustom;
 using UnityEngine;
 
-namespace DiehardMasterDisaster.Hooks;
+namespace DiehardMasterDisaster.GunStuff;
 
 public static class GunHooks
 {

@@ -1,4 +1,4 @@
-﻿namespace DiehardMasterDisaster.Hooks;
+﻿namespace DiehardMasterDisaster.SaveData;
 
 public static class SaveDataHooks
 {
