@@ -13,10 +13,10 @@ public static class SaveDataHooks
         {
             foreach (var absPlayer in self.Players)
             {
-                if (absPlayer.realizedCreature is Player player && player.GetDMD().IsDMD)
+                if (absPlayer.realizedCreature is Player player && player.IsDMD(out var dmd))
                 {
-                    SaveUtils.SaveGuns(player.GetDMD());
-                    SaveUtils.SaveAmmo(player.GetDMD());
+                    SaveUtils.SaveGuns(dmd);
+                    SaveUtils.SaveAmmo(dmd);
                 }
             }
         }

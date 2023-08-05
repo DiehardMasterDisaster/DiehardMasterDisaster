@@ -12,8 +12,7 @@ public static class HUDHooks
     private static void Player_Update(On.Player.orig_Update orig, Player self, bool eu)
     {
         orig(self,eu);
-        var dmd = self.GetDMD();
-        if (self.isNPC || !dmd.IsDMD || dmd.HUD != null) return;
+        if (self.isNPC || !self.IsDMD(out var dmd) || dmd.HUD != null) return;
         
         //-- TODO: Splitscreen support
         var hud = self.abstractCreature.world.game.cameras.FirstOrDefault()?.hud;

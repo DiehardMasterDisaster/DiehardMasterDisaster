@@ -14,7 +14,7 @@ public static class CoolnessHooks
     {
         orig(self, killer, victim);
 
-        if (killer is not Player player || !player.GetDMD().IsDMD) return;
+        if (killer is not Player player || !player.IsDMD(out _)) return;
         
         CoolnessTracker.AddKill(victim);
     }

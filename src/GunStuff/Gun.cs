@@ -239,16 +239,16 @@ abstract public class Gun : Weapon, IDrawable
         if (canReload || owner is Scavenger || owner == null)
         {
             reloadTime = reloadSpeed;
-            if (owner is Player player && player.GetDMD().IsDMD)
+            if (owner is Player player && player.IsDMD(out var dmd))
             {
-                player.GetDMD().HUD.Show(reloadSpeed + WeaponsHUD.DefaultHudDisplayTime);
+                dmd.HUD.Show(reloadSpeed + WeaponsHUD.DefaultHudDisplayTime);
             }
         }
         else if (triggerIsReleased)
         {
-            if (owner is Player player && player.GetDMD().IsDMD)
+            if (owner is Player player && player.IsDMD(out var dmd))
             {
-                player.GetDMD().HUD.Show();
+                dmd.HUD.Show();
             }
             room.PlaySound(SoundID.Rock_Hit_Wall, firstChunk.pos, .9f, 1.35f);
             firstChunk.pos -= aimDir * 5f;

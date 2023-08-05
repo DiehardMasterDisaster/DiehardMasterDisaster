@@ -140,5 +140,18 @@ public static class PlayerExtension
 
     private static readonly ConditionalWeakTable<Player, DiehardPlayer> _cwt = new ();
 
+    public static bool IsDMD(this Player player, out DiehardPlayer result)
+    {
+        var dmd = player.GetDMD();
+        if (dmd.IsDMD)
+        {
+            result = dmd;
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
     public static DiehardPlayer GetDMD(this Player player) => _cwt.GetValue(player, _ => new(player));
 }

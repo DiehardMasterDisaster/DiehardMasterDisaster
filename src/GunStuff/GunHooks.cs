@@ -25,9 +25,9 @@ public static class GunHooks
 
         orig(self, grasp);
         
-        if (gun != null && self.GetDMD().IsDMD)
+        if (gun != null && self.IsDMD(out var dmd))
         {
-            self.GetDMD().StoreGun(gun);
+            dmd.StoreGun(gun);
         }
     }
 
@@ -35,12 +35,12 @@ public static class GunHooks
     {
         orig(self, obj, graspUsed);
 
-        if (self.grasps[graspUsed]?.grabbed is Gun gun && self.GetDMD().IsDMD && !self.GetDMD().ActuallyEquipGun)
+        if (self.grasps[graspUsed]?.grabbed is Gun gun && self.IsDMD(out var dmd) && !dmd.ActuallyEquipGun)
         {
-            self.GetDMD().StoreGun(gun);
+            dmd.StoreGun(gun);
             if (self.grasps[graspUsed == 0 ? 1 : 0]?.grabbed is not Gun)
             {
-                self.GetDMD().EquipGun(gun.abstractGun.type);
+                dmd.EquipGun(gun.abstractGun.type);
             }
         }
     }
@@ -49,8 +49,7 @@ public static class GunHooks
     {
         orig(self, eu);
 
-        var dmd = self.GetDMD();
-        if (!dmd.IsDMD) return;
+        if (!self.IsDMD(out var dmd)) return;
         
         //-- TODO: Proper keybinds
         var prevPressed = Input.GetKey(KeyCode.KeypadDivide);
