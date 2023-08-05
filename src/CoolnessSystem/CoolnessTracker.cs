@@ -1,12 +1,17 @@
-﻿using Menu;
+﻿using System;
+using Menu;
+using UnityEngine;
 
 namespace DiehardMasterDisaster.CoolnessSystem;
 
 public static class CoolnessTracker
 {
     private const float DefaultScore = 5;
+    private const float CoolnessPerLevel = 20;
     
     public static float CurrentCoolness;
+    public static int CurrentLevel => Math.Min(Mathf.FloorToInt(CurrentCoolness / CoolnessPerLevel), 4);
+    public static int KarmaLevel => CurrentCoolness >= 5 * CoolnessPerLevel ? 9 : CurrentLevel;
 
     private static int[] KillScores = new int[ExtEnum<MultiplayerUnlocks.SandboxUnlockID>.values.Count];
 
@@ -20,7 +25,7 @@ public static class CoolnessTracker
             KillScores[i] = 1;
         }
         SandboxSettingsInterface.DefaultKillScores(ref KillScores);
-        KillScores[(int)MultiplayerUnlocks.SandboxUnlockID.Slugcat] = 1;
+        KillScores[(int)MultiplayerUnlocks.SandboxUnlockID.Slugcat] = 20;
     }
 
     public static void AddKill(Creature creature)

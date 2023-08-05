@@ -2,7 +2,7 @@
 using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
 
-namespace DiehardMasterDisaster;
+namespace DiehardMasterDisaster.SaveData;
 
 public static class SaveUtils
 {

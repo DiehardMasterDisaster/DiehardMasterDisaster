@@ -2,6 +2,7 @@
 using System.Security;
 using System.Security.Permissions;
 using BepInEx;
+using DiehardMasterDisaster.CoolnessSystem;
 using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
 using DiehardMasterDisaster.HUD;
@@ -80,6 +81,11 @@ public class Plugin : BaseUnityPlugin
             foreach (var ammoType in ExtEnumBase.GetNames(typeof(DiehardEnums.AmmoType)))
             {
                 Futile.atlasManager.LoadImage($"sprites/WeaponsHUDCategoryIcon{ammoType}");
+            }
+
+            for (var i = 0; i <= 4; i++)
+            {
+                Futile.atlasManager.LoadImage($"sprites/DMDCoolness{i}");
             }
 
             GunHooks.Apply();

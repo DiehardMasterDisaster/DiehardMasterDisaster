@@ -36,8 +36,8 @@ public static class PlayerExtension
                 SaveData = session.saveState.miscWorldSaveData.GetSlugBaseData();
             }
             
-            SaveUtils.LoadGuns(this);
-            SaveUtils.LoadAmmo(this);
+            DiehardMasterDisaster.SaveData.SaveUtils.LoadGuns(this);
+            DiehardMasterDisaster.SaveData.SaveUtils.LoadAmmo(this);
         }
 
         public int TrySubtractAmmo(DiehardEnums.AmmoType ammoType, int amount)
@@ -154,4 +154,6 @@ public static class PlayerExtension
     }
 
     public static DiehardPlayer GetDMD(this Player player) => _cwt.GetValue(player, _ => new(player));
+
+    public static bool IsDMD(this RainWorldGame game) => game.session is StoryGameSession session && session.saveStateNumber == DiehardEnums.DMD;
 }
