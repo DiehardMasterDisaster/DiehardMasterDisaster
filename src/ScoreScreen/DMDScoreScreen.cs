@@ -8,6 +8,7 @@ namespace DiehardMasterDisaster.ScoreScreen;
 public class DMDScoreScreen : Menu.Menu
 {
     public static float LastSessionTimer;
+    public KarmaLadderScreen.SleepDeathScreenDataPackage SleepPackage;
 
     private PlayerSessionRecord record;
     private FSprite backgroundSprite;
@@ -23,7 +24,7 @@ public class DMDScoreScreen : Menu.Menu
     private float vCenterAnchor;
 
     private const int InitialScoreDelay = 120;
-    private const int ScoreDelay = 60;
+    private const int ScoreDelay = 50;
     private const int ScoreYOffset = 65;
     
     private float scoreYPos;
@@ -31,7 +32,7 @@ public class DMDScoreScreen : Menu.Menu
     
     private static readonly Color blueColor = new(144f / 255, 135f / 255, 175f / 255);
     private static readonly Color redColor = new(233f / 255, 30f / 255, 66f / 255);
-    
+
     public DMDScoreScreen(ProcessManager manager, StoryGameSession session) : base(manager, DiehardEnums.Process.DMDScoreScreen)
     {
         record = session.playerSessionRecords[0];
@@ -54,11 +55,16 @@ public class DMDScoreScreen : Menu.Menu
         }
         
         manager.musicPlayer.MenuRequestsSong(DiehardEnums.Song.DMDScoreScreen, 1f, 1f);
+        manager.musicPlayer.song.Loop = true;
 
         pages.Add(new Page(this, null, "main", 0));
 
         scene = new InteractiveMenuScene(this, pages[0], manager.rainWorld.options.subBackground);
         pages[0].subObjects.Add(scene);
+        
+        var continueButton = new SimpleButton(this, pages[0], Translate("CONTINUE"), "CONTINUE", new Vector2((manager.rainWorld.options.ScreenSize.x + (1366f - manager.rainWorld.options.ScreenSize.x) / 2f) - 180f - manager.rainWorld.options.SafeScreenOffset.x, Mathf.Max(manager.rainWorld.options.SafeScreenOffset.y, 15f)), new Vector2(110f, 30f));
+        pages[0].subObjects.Add(continueButton);
+        pages[0].lastSelectedObject = continueButton;
 
         using (new CustomFont(CustomFont.DukeNukem3DFont2x))
         {
@@ -85,6 +91,14 @@ public class DMDScoreScreen : Menu.Menu
         scoreLabels.Enqueue(new("TOTAL SCORE", score.total.ToString()));
     }
 
+    public override void Singal(MenuObject sender, string message)
+    {
+        if (message == "CONTINUE")
+        {
+            manager.RequestMainProcessSwitch(ProcessManager.ProcessID.SleepScreen);
+        }
+    }
+
     public override void Update()
     {
         base.Update();
@@ -109,6 +123,16 @@ public class DMDScoreScreen : Menu.Menu
 
                 scoreYPos -= ScoreYOffset;
             }
+        }
+    }
+
+    public override void CommunicateWithUpcomingProcess(MainLoopProcess nextProcess)
+    {
+        base.CommunicateWithUpcomingProcess(nextProcess);
+
+        if (nextProcess is KarmaLadderScreen karmaLadderScreen)
+        {
+            karmaLadderScreen.GetDataFromGame(SleepPackage);
         }
     }
 
