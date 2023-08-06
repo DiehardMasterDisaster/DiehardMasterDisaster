@@ -62,7 +62,7 @@ public class DMDScoreScreen : Menu.Menu
 
         using (new CustomFont(CustomFont.DukeNukem3DFont2x))
         {
-            var label = new MenuLabel(this, pages[0], $"CICLE {session.saveState.cycleNumber}", new Vector2(hCenterAnchor - 100, topAnchor - 120), new Vector2(200, 200), false);
+            var label = new MenuLabel(this, pages[0], $"CYCLE {session.saveState.cycleNumber}", new Vector2(hCenterAnchor - 100, topAnchor - 120), new Vector2(200, 200), false);
             label.label.color = redColor;
             pages[0].subObjects.Add(label);
             label = new MenuLabel(this, pages[0], "COMPLETED", new Vector2(hCenterAnchor - 100, topAnchor - 195), new Vector2(200, 200), false);
