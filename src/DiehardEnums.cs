@@ -11,6 +11,7 @@ public static class DiehardEnums
         RuntimeHelpers.RunClassConstructor(typeof(AmmoType).TypeHandle);
         RuntimeHelpers.RunClassConstructor(typeof(AbstractObject).TypeHandle);
         RuntimeHelpers.RunClassConstructor(typeof(Sound).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(Process).TypeHandle);
     }
 
     public static class AbstractObject
@@ -28,6 +29,17 @@ public static class DiehardEnums
     public static class Sound
     {
         public static readonly SoundID DMDAK47Shoot = new(nameof(DMDAK47Shoot), true);
+        public static readonly SoundID DMDScoreScreenBoom = new(nameof(DMDScoreScreenBoom), true);
+    }
+
+    public static class Process
+    {
+        public static readonly ProcessManager.ProcessID DMDScoreScreen = new(nameof(DMDScoreScreen), true);
+    }
+
+    public static class Song
+    {
+        public const string DMDScoreScreen = nameof(DMDScoreScreen);
     }
     
     public class AmmoType : ExtEnum<AmmoType>

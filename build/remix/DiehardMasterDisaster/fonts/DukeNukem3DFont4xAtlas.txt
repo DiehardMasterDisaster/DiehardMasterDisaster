@@ -1,0 +1,20 @@
+{"frames": {
+
+"DukeNukem3DFont4xAtlas.png":
+{
+	"frame": {"x":0,"y":0,"w":920,"h":923},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":920,"h":923},
+	"sourceSize": {"w":920,"h":923}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "DukeNukem3DFont4xAtlas.png",
+	"format": "RGBA8888",
+	"size": {"w":920,"h":923},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:06b3405a514af1121f3620e5e97c58f7:84bb6fb0afe9ca6dcaeee68f328ba585:bc1a2af84ef54ce18a66ed220949b9f0$"
+}
+}

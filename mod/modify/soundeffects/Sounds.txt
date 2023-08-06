@@ -1,0 +1,2 @@
+[ADD]DMDAK47Shoot/rangeFac=1 : DMDAK47Shoot/vol=0.5/pitch=1
+[ADD]DMDScoreScreenBoom/rangeFac=1 : DMDScoreScreenBoom/vol=0.4/pitch=1

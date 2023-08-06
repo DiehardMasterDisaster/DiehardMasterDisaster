@@ -8,6 +8,7 @@ using DiehardMasterDisaster.GunStuff;
 using DiehardMasterDisaster.HUD;
 using DiehardMasterDisaster.PlayerStuff;
 using DiehardMasterDisaster.SaveData;
+using DiehardMasterDisaster.ScoreScreen;
 using Fisobs.Core;
 using UnityEngine;
 
@@ -93,6 +94,10 @@ public class Plugin : BaseUnityPlugin
             HUDHooks.Apply();
             SaveDataHooks.Apply();
             CoolnessHooks.Apply();
+            ScoreScreenHooks.Apply();
+            ScoreTrackingHooks.Apply();
+
+            CustomFont.Load();
             
             Content.Register(
                 new GunFisob(DiehardEnums.AbstractObject.DMDAK47Gun),
