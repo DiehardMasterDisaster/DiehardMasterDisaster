@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.HUD;
+using Rewired;
+using RewiredConsts;
 using RWCustom;
 using UnityEngine;
 
@@ -13,10 +15,10 @@ public static class GunHooks
     public static void Apply()
     {
         On.Player.Update += Player_Update;
+        On.Player.Update += DMDPlayer_Update;
         On.Player.ThrowObject += Player_ThrowObject;
         On.Player.ReleaseGrasp += Player_ReleaseGrasp;
         On.Player.SlugcatGrab += Player_SlugcatGrab;
-        On.Player.Update += OnPlayer_Update;
     }
 
     private static void Player_ReleaseGrasp(On.Player.orig_ReleaseGrasp orig, Player self, int grasp)
@@ -45,7 +47,7 @@ public static class GunHooks
         }
     }
 
-    private static void OnPlayer_Update(On.Player.orig_Update orig, Player self, bool eu)
+    private static void DMDPlayer_Update(On.Player.orig_Update orig, Player self, bool eu)
     {
         orig(self, eu);
 
@@ -186,27 +188,86 @@ public static class GunHooks
     private static void Player_Update(On.Player.orig_Update orig, Player self, bool eu)
     {
         orig(self, eu);
+
+        var dmd = self.GetDMD();
+
+        dmd.LastMousePos = dmd.MousePos;
+        dmd.MousePos = Futile.mousePosition;
+
+        //-- TODO: Proper keybinds
+        if (self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer && (dmd.MousePos != dmd.LastMousePos || Input.GetMouseButton(0)))
+        {
+            dmd.LastMouseActivity = 0;
+        }
+        else
+        {
+            dmd.LastMouseActivity++;
+        }
         
+        var cam = self.abstractCreature.world?.game.cameras.FirstOrDefault();
+
+        Vector2 aimAngle = default;
+        
+        //-- Analog aim, probably breaks with splitscreen?
+        if (cam != null && dmd.IsDMD)
+        {
+            var aimFromPos = Vector2.Lerp(self.bodyChunks[0].pos, self.bodyChunks[1].pos, .3f) - cam.pos;
+            if (self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer)
+            {
+                if (dmd.MouseActive)
+                {
+                    aimAngle = Custom.DirVec(aimFromPos, Futile.mousePosition);
+                }
+            }
+            else if (RWInput.PlayerRecentController(self.playerState.playerNumber, Custom.rainWorld) is Joystick joystick)
+            {
+                if (joystick.Axes2D.Count >= 2)
+                {
+                    //-- TODO: Assuming it is the same for all joysticks, should check later
+                    var axis = joystick.Axes2D[1];
+                    var analogInput = axis.value * (ModManager.MMF ? Custom.rainWorld.options.analogSensitivity : 1f);
+                    if (analogInput.magnitude >= 0.2f)
+                    {
+                        aimAngle = analogInput.normalized;
+                    }
+                }
+            }
+        }
+
         // Gun aim
         for (var i = 0; i < self.grasps.Length; i++)
         {
             if (self.grasps[i]?.grabbed is Gun gun)
             {
-                gun.aimDir = Custom.DirVec(Vector2.Lerp(self.bodyChunks[0].pos, self.bodyChunks[1].pos, .3f), gun.firstChunk.pos);
-                gun.aimDir = (gun.aimDir + new Vector2(self.flipDirection * 1.55f, (i == 1 && self.grasps[0] != null) ? .35f : 0f)).normalized;
+                //-- Special animation when reloading
                 if (gun.reloadTime > 0)
                 {
                     gun.aimDir = (gun.aimDir - new Vector2(0, .5f)).normalized;
                 }
-                else if (self.input[0].thrw)
+                //-- Analog aim
+                else if (aimAngle != default)
                 {
-                    var dirX = self.input[0].x;
-                    if (self.input[0].x == 0)
+                    gun.aimDir = aimAngle;
+                }
+                //-- Regular aim if there's no recent input
+                else
+                {
+                    gun.aimDir = Custom.DirVec(Vector2.Lerp(self.bodyChunks[0].pos, self.bodyChunks[1].pos, .3f), gun.firstChunk.pos);
+                    gun.aimDir = (gun.aimDir + new Vector2(self.flipDirection * 1.55f, (i == 1 && self.grasps[0] != null) ? .35f : 0f)).normalized;
+                    if (gun.reloadTime > 0)
                     {
-                        dirX = self.flipDirection;
+                        gun.aimDir = (gun.aimDir - new Vector2(0, .5f)).normalized;
                     }
+                    else if (self.input[0].thrw)
+                    {
+                        var dirX = self.input[0].x;
+                        if (self.input[0].x == 0)
+                        {
+                            dirX = self.flipDirection;
+                        }
 
-                    gun.aimDir = (gun.aimDir * .1f + new Vector2(dirX, self.input[0].y * .2f)).normalized;
+                        gun.aimDir = (gun.aimDir * .1f + new Vector2(dirX, self.input[0].y * .2f)).normalized;
+                    }
                 }
 
                 if (Random.value < 0.02f)
@@ -217,7 +278,8 @@ public static class GunHooks
         }
 
         // Auto shooting
-        if (self.input[0].thrw)
+        //-- TODO: Proper keybinds, especially for mouse/controller
+        if (self.input[0].thrw || (dmd.IsDMD && self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer && dmd.MouseActive && Input.GetMouseButton(0)))
         {
             for (var i = 0; i < self.grasps.Length; i++)
             {

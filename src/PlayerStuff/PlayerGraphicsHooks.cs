@@ -31,7 +31,7 @@ public static class PlayerGraphicsHooks
             self.limbNumber = self.limbNumber == 1 ? 0 : 1;
             (player.grasps[0], player.grasps[1]) = (player.grasps[1], player.grasps[0]);
         }
-        orig.Invoke(self);
+        orig(self);
         if (flipStuff)
         {
             self.limbNumber = self.limbNumber == 1 ? 0 : 1;
@@ -43,6 +43,9 @@ public static class PlayerGraphicsHooks
     {
         orig(self, sLeaser, rCam, palette);
 
+        if (self.owner is not Player player || !player.IsDMD(out _)) return;
+
+        //-- TODO: Do this in a more proper way, same thing for the rest of the colors/sprites, we also need grayscale sprites so they can be customized
         sLeaser.sprites[2].color = new Color(50 / 255f, 25 / 255f, 60 / 255f);
     }
 

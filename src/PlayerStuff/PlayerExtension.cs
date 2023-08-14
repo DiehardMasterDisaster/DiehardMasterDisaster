@@ -6,6 +6,7 @@ using DiehardMasterDisaster.Fisobs;
 using DiehardMasterDisaster.GunStuff;
 using DiehardMasterDisaster.HUD;
 using SlugBase.SaveData;
+using UnityEngine;
 
 namespace DiehardMasterDisaster;
 
@@ -13,6 +14,9 @@ public static class PlayerExtension
 {
     public class DiehardPlayer
     {
+        //-- TODO: Could be a setting?
+        private const int MouseInactivityTime = 160;
+        
         public readonly bool IsDMD;
         public readonly SlugBaseSaveData SaveData;
         public readonly Dictionary<DiehardEnums.AmmoType, int> StoredAmmo = new();
@@ -25,6 +29,11 @@ public static class PlayerExtension
 
         public bool SwapWeaponNextKey;
         public bool SwapWeaponPrevKey;
+
+        public Vector2 LastMousePos;
+        public Vector2 MousePos;
+
+        public int LastMouseActivity = 1000;
 
         public DiehardPlayer(Player player)
         {
@@ -135,7 +144,9 @@ public static class PlayerExtension
             }
             
             HUD.Show();
-        } 
+        }
+
+        public bool MouseActive => LastMouseActivity <= MouseInactivityTime;
     }
 
     private static readonly ConditionalWeakTable<Player, DiehardPlayer> _cwt = new ();

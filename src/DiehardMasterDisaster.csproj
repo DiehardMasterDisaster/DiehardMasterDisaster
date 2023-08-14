@@ -71,6 +71,10 @@
       <HintPath>..\game\BepInEx\core\MonoMod.Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>..\game\RainWorld_Data\Managed\Rewired_Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\game\RainWorld_Data\Managed\UnityEngine.dll</HintPath>
       <Private>false</Private>
