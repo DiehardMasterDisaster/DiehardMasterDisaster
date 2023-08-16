@@ -22,8 +22,6 @@ public static class DiehardEnums
         public static readonly AbstractPhysicalObject.AbstractObjectType DMDBFGGun = new(nameof(DMDBFGGun), true);
         public static readonly AbstractPhysicalObject.AbstractObjectType DMDMinigun = new(nameof(DMDMinigun), true);
         public static readonly AbstractPhysicalObject.AbstractObjectType DMDDerringerGun = new(nameof(DMDDerringerGun), true);
-        public static readonly AbstractPhysicalObject.AbstractObjectType DMDPipe = new(nameof(DMDPipe), true);
-        public static readonly AbstractPhysicalObject.AbstractObjectType DMDBFGOrb = new(nameof(DMDBFGOrb), true);
     }
 
     public static class Sound

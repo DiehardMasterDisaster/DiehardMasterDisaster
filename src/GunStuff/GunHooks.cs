@@ -193,6 +193,7 @@ public static class GunHooks
 
         dmd.LastMousePos = dmd.MousePos;
         dmd.MousePos = Futile.mousePosition;
+        dmd.ManualAim = false;
 
         //-- TODO: Proper keybinds
         if (self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer && (dmd.MousePos != dmd.LastMousePos || Input.GetMouseButton(0)))
@@ -217,6 +218,7 @@ public static class GunHooks
                 if (dmd.MouseActive)
                 {
                     aimAngle = Custom.DirVec(aimFromPos, Futile.mousePosition);
+                    dmd.ManualAim = true;
                 }
             }
             else if (RWInput.PlayerRecentController(self.playerState.playerNumber, Custom.rainWorld) is Joystick joystick)
@@ -229,6 +231,7 @@ public static class GunHooks
                     if (analogInput.magnitude >= 0.2f)
                     {
                         aimAngle = analogInput.normalized;
+                        dmd.ManualAim = true;
                     }
                 }
             }
@@ -277,26 +280,40 @@ public static class GunHooks
             }
         }
 
+        var mouseFire = dmd.IsDMD && self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer && dmd.MouseActive && Input.GetMouseButton(0);
+
         // Auto shooting
         //-- TODO: Proper keybinds, especially for mouse/controller
-        if (self.input[0].thrw || (dmd.IsDMD && self.input[0].controllerType == Options.ControlSetup.Preset.KeyboardSinglePlayer && dmd.MouseActive && Input.GetMouseButton(0)))
+        if (self.input[0].thrw || mouseFire)
         {
             for (var i = 0; i < self.grasps.Length; i++)
             {
-                if (self.grasps[i]?.grabbed is Gun gun && gun.automatic)
+                if (self.grasps[i]?.grabbed is Gun gun)
                 {
-                    var throwDir = new IntVector2(self.ThrowDirection, 0);
-
-                    gun.TryShoot(self);
-                    if (gun.justShot)
+                    if (gun.automatic)
                     {
-                        self.bodyChunks[0].vel -= throwDir.ToVector2() * 5f * gun.damageStat;
-                        self.bodyChunks[1].vel += throwDir.ToVector2() * 3f * gun.damageStat;
-                    }
+                        var throwDir = new IntVector2(self.ThrowDirection, 0);
 
-                    (self.graphicsModule as PlayerGraphics)?.LookAtObject(gun);
+                        gun.TryShoot(self);
+                        if (gun.justShot)
+                        {
+                            self.bodyChunks[0].vel -= throwDir.ToVector2() * 5f * gun.damageStat;
+                            self.bodyChunks[1].vel += throwDir.ToVector2() * 3f * gun.damageStat;
+                        }
+
+                        (self.graphicsModule as PlayerGraphics)?.LookAtObject(gun);
+                    }
+                    else if (!dmd.TryingToMouseFire && mouseFire)
+                    {
+                        dmd.TryingToMouseFire = true;
+                        self.ThrowObject(i, eu);
+                    }
                 }
             }
+        }
+        else
+        {
+            dmd.TryingToMouseFire = false;
         }
     }
 }

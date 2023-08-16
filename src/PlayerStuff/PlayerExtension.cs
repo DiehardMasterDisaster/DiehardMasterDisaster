@@ -32,9 +32,11 @@ public static class PlayerExtension
 
         public Vector2 LastMousePos;
         public Vector2 MousePos;
+        public bool ManualAim;
+        public bool TryingToMouseFire;
 
         public int LastMouseActivity = 1000;
-
+        
         public DiehardPlayer(Player player)
         {
             IsDMD = player.SlugCatClass == DiehardEnums.DMD;

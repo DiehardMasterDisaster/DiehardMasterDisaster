@@ -45,6 +45,8 @@ public class GrenadeLauncher : Gun
 
     public override void SummonProjectile(PhysicalObject user, bool boostAccuracy)
     {
+        //-- TODO: Reimplement with Projectile
+        /*
         var pipeAPO = new AbstractProjectile(room.world, DiehardEnums.AbstractObject.DMDPipe, abstractPhysicalObject.pos, room.world.game.GetNewID());
         pipeAPO.RealizeInRoom();
         var newPipe = (Pipe)pipeAPO.realizedObject;
@@ -63,6 +65,7 @@ public class GrenadeLauncher : Gun
         }
 
         relatedObjects.Add(newPipe);
+        */
     }
 
     public override void NewRoom(Room newRoom)

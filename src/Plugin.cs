@@ -105,10 +105,7 @@ public class Plugin : BaseUnityPlugin
                 new GunFisob(DiehardEnums.AbstractObject.DMDDerringerGun),
                 new GunFisob(DiehardEnums.AbstractObject.DMDMinigun),
                 new GunFisob(DiehardEnums.AbstractObject.DMDShotgun),
-                new GunFisob(DiehardEnums.AbstractObject.DMDGrenadeLauncherGun),
-
-                new ProjectileFisob(DiehardEnums.AbstractObject.DMDBFGOrb),
-                new ProjectileFisob(DiehardEnums.AbstractObject.DMDPipe)
+                new GunFisob(DiehardEnums.AbstractObject.DMDGrenadeLauncherGun)
                 );
         }
         catch (Exception ex)

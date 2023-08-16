@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DiehardMasterDisaster.GunStuff;
 
 // Slightly modified Slime_Cubed bullets
-public class Bullet : UpdatableAndDeletable, IDrawable
+public class HitscanProjectile : UpdatableAndDeletable, IDrawable, SharedPhysics.IProjectileTracer
 {
     public PhysicalObject parent;
 
@@ -25,7 +25,7 @@ public class Bullet : UpdatableAndDeletable, IDrawable
     public float maxDist = 2500f;
     public float stun = 15f;
 
-    public Bullet(PhysicalObject parent, Vector2 startPos, Vector2 direction, float damage, float force, float stun)
+    public HitscanProjectile(PhysicalObject parent, Vector2 startPos, Vector2 direction, float damage, float force, float stun)
     {
         this.parent = parent;
         this.startPos = startPos;
@@ -40,7 +40,7 @@ public class Bullet : UpdatableAndDeletable, IDrawable
         loud = true;
     }
 
-    public Bullet(PhysicalObject parent, Vector2 startPos, Vector2 direction, float damage, float force, float stun, bool onlyBurn, bool loud)
+    public HitscanProjectile(PhysicalObject parent, Vector2 startPos, Vector2 direction, float damage, float force, float stun, bool onlyBurn, bool loud)
     {
         this.parent = parent;
         this.startPos = startPos;
@@ -65,7 +65,7 @@ public class Bullet : UpdatableAndDeletable, IDrawable
         {
             (collisionResultLayer0.obj as Overseer).Violence(parent.firstChunk, direction * force + Vector2.up * 0.2f * force, collisionResultLayer0.chunk, collisionResultLayer0.onAppendagePos, Creature.DamageType.Stab, damage * 10f, stun);
         }
-        var collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(null, room, startPos, ref hitPos, 0.1f, 1, parent, true);
+        var collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(this, room, startPos, ref hitPos, 0.1f, 1, parent, true);
         if (collisionResult.hitSomething) hitPos = collisionResult.collisionPoint;
 
         // Strike the hit object
@@ -178,4 +178,8 @@ public class Bullet : UpdatableAndDeletable, IDrawable
         rCam.ReturnFContainer("GrabShaders").AddChild(sLeaser.sprites[0]);
         rCam.ReturnFContainer("Items").AddChild(sLeaser.sprites[1]);
     }
+
+    public bool HitThisObject(PhysicalObject obj) => obj is Creature && obj != parent && (Custom.rainWorld.options.friendlyFire || obj is not Player);
+
+    public bool HitThisChunk(BodyChunk chunk) => true;
 }

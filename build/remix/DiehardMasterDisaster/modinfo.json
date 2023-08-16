@@ -5,8 +5,8 @@
 	"hide_version": false,
 	"authors": "",
 	"description": "Diehard Master-Disaster",
-	"requirements": ["slime-cubed.slugbase", "pom"],
-	"requirements_names": ["SlugBase", "POM"],
+	"requirements": ["slime-cubed.slugbase", "fisobs"],
+	"requirements_names": ["SlugBase", "Fisobs"],
 	"checksum_override_version": false,
 	"tags": [  ]
 }

@@ -30,7 +30,7 @@ public class Shotgun : Gun
         var mult = 6;
         for (var i = mult; i > 0; i--)
         {
-            var newBullet = new Bullet(user, firstChunk.pos + aimDir * (gunLength / 2f), (aimDir.normalized + (Random.insideUnitCircle * randomSpreadStat * (boostAccuracy ? 0.3f : 1f)) * .045f).normalized, damageStat / mult, 1.5f + 2f * damageStat / mult, 15f + 30f * damageStat / mult);
+            var newBullet = new HitscanProjectile(user, firstChunk.pos + aimDir * (gunLength / 2f), (aimDir.normalized + (Random.insideUnitCircle * randomSpreadStat * (boostAccuracy ? 0.3f : 1f)) * .045f).normalized, damageStat / mult, 1.5f + 2f * damageStat / mult, 15f + 30f * damageStat / mult);
             room.AddObject(newBullet);
             newBullet.Fire();
         }

@@ -27,7 +27,7 @@ public class AK47 : Gun
 
     public override void SummonProjectile(PhysicalObject user, bool boostAccuracy)
     {
-        var newBullet = new Bullet(user, firstChunk.pos + upDir * 5f + aimDir * (gunLength / 2f), (aimDir.normalized + (UnityEngine.Random.insideUnitCircle * randomSpreadStat * (boostAccuracy ? 0.3f : 1f)) * .045f).normalized, damageStat, 4.5f + 2f * damageStat, 15f + 30f * damageStat);        
+        var newBullet = new HitscanProjectile(user, firstChunk.pos + upDir * 5f + aimDir * (gunLength / 2f), (aimDir.normalized + (UnityEngine.Random.insideUnitCircle * randomSpreadStat * (boostAccuracy ? 0.3f : 1f)) * .045f).normalized, damageStat, 4.5f + 2f * damageStat, 15f + 30f * damageStat);        
         room.AddObject(newBullet);
         newBullet.Fire();
         user.bodyChunks[0].vel -= aimDir * 2f;
